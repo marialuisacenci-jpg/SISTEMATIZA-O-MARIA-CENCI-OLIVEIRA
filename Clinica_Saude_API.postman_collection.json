@@ -1,0 +1,270 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-1234567890ab",
+    "name": "Clínica de Saúde - API de Disponibilidade",
+    "description": "Coleção de testes automatizados para a API da Clínica de Saúde (FastAPI).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Geral",
+      "item": [
+        {
+          "name": "Status da API",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"API está online\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"online\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Especialidades",
+      "item": [
+        {
+          "name": "Listar Especialidades",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Retorna lista de especialidades\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('especialidades');",
+                  "    pm.expect(jsonData.especialidades).to.be.an('array');",
+                  "    pm.expect(jsonData.especialidades.length).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/especialidades",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "especialidades"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profissionais",
+      "item": [
+        {
+          "name": "Listar Todos os Profissionais",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Retorna um array de profissionais\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    pm.expect(jsonData.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Valida a estrutura do primeiro profissional\", function () {",
+                  "    var item = pm.response.json()[0];",
+                  "    pm.expect(item).to.have.property('id');",
+                  "    pm.expect(item).to.have.property('nome');",
+                  "    pm.expect(item).to.have.property('especialidade');",
+                  "    pm.expect(item).to.have.property('horarios_disponiveis');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/profissionais",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "profissionais"]
+            }
+          }
+        },
+        {
+          "name": "Filtrar por Especialidade (Cardiologia)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Todos os resultados pertencem à Cardiologia\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    jsonData.forEach(function(p) {",
+                  "        pm.expect(p.especialidade.toLowerCase()).to.eql('cardiologia');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/profissionais?especialidade=Cardiologia",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "profissionais"],
+              "query": [
+                {
+                  "key": "especialidade",
+                  "value": "Cardiologia"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filtrar por Nome (Busca Parcial)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"O nome do profissional contém 'Ana'\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.length).to.be.above(0);",
+                  "    jsonData.forEach(function(p) {",
+                  "        pm.expect(p.nome.toLowerCase()).to.include('ana');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/profissionais?nome=Ana",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "profissionais"],
+              "query": [
+                {
+                  "key": "nome",
+                  "value": "Ana"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar Profissional por ID Existente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Retorna o profissional com ID 1\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.id).to.eql(1);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/profissionais/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "profissionais", "1"]
+            }
+          }
+        },
+        {
+          "name": "Buscar Profissional por ID Inexistente (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 404 Not Found\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Retorna mensagem de detalhe do erro\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('detail');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/profissionais/999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "profissionais", "999"]
+            }
+          }
+        }
+      ]
+    }    
+  ]
+}
